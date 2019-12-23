@@ -31,3 +31,22 @@ def plot_fn_3d(data=tuple(), labels=('X','Y','Z'), scale="linear", title="Graph"
     plt.savefig(fname=title.join('.png'), format='png')
 
     return
+
+'''
+https://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib
+'''
+
+def plotting_map_shapes():
+
+    import shapefile as shp  # Requires the pyshp package
+    import matplotlib.pyplot as plt
+
+    sf = shp.Reader("test.shp")
+
+    plt.figure()
+    for shape in sf.shapeRecords():
+        x = [i[0] for i in shape.shape.points[:]]
+        y = [i[1] for i in shape.shape.points[:]]
+        plt.plot(x,y)
+    plt.show()
+    return
