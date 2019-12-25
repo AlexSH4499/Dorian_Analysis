@@ -50,3 +50,29 @@ def plotting_map_shapes():
         plt.plot(x,y)
     plt.show()
     return
+
+''' 
+alt solution
+
+https://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib/309780#309780
+'''
+
+def alt_map_plot():
+
+    import matplotlib.pyplot as plt
+    import shapefile
+    import numpy as np
+
+    this_shapefile = shapefile.Reader(map_file_base) # whichever file
+    shape = this_shapefile.shape(i) # whichever shape
+    points = np.array(shape.points)
+
+    intervals = list(shape.parts) + [len(shape.points)]
+
+    ax = plt.gca()
+    ax.set_aspect(1)
+
+    for (i, j) in zip(intervals[:-1], intervals[1:]):
+        ax.plot(*zip(*points[i:j]))
+
+    return
