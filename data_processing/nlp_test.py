@@ -89,9 +89,11 @@ def split_data(data_set:List[Any], cut_off_index:int=7000)->tuple:
 def prepare_data(language="english")-> List[Any]:
     data_set = []
 
+    #raw data
     pos_tweets = twitter_samples.strings('positive_tweets.json')
     neg_tweets = twitter_samples.strings('negative_tweets.json')
 
+    #tokenized data
     positive_tweet_tokens = twitter_samples.tokenized('positive_tweets.json')
     negative_tweet_tokens = twitter_samples.tokenized('negative_tweets.json')
 
@@ -112,27 +114,7 @@ def prepare_data(language="english")-> List[Any]:
     return pos_data + neg_data
 
 def test(language="english"):
-    # #loading our pre-labeled data
-    # pos_tweets = twitter_samples.strings('positive_tweets.json')
-    # neg_tweets = twitter_samples.strings('negative_tweets.json')
 
-    # text = twitter_samples.strings('tweets.20150430-223406.json')
-
-    # positive_tweet_tokens = twitter_samples.tokenized('positive_tweets.json')
-    # negative_tweet_tokens = twitter_samples.tokenized('negative_tweets.json')
-    
-    # #Words to ignore from Language
-    # stop_words = stopwords.words(language)
-
-    # positive_cleaned_tokens_list = [remove_noise(tokens , stop_words) for tokens in positive_tweet_tokens]
-    # negative_cleaned_tokens_list = [remove_noise(tokens , stop_words) for tokens in negative_tweet_tokens]
-
-
-    # positive_tokens_for_model = get_tweets_for_model(positive_cleaned_tokens_list)
-    # negative_tokens_for_model = get_tweets_for_model(negative_cleaned_tokens_list)
-
-    # pos_data = [(tweet_dict, "Positive") for tweet_dict in positive_tokens_for_model]
-    # neg_data = [(tweet_dict, "Negative") for tweet_dict in negative_tokens_for_model]
     data_set = prepare_data(language)
     #7000 to train 3,000 to test
     train, test = split_data(data_set, cut_off_index=7000)

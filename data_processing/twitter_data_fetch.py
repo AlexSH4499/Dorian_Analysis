@@ -1,17 +1,17 @@
 import tweepy
 
-consumer_key, consumer_secret = "KEY HERE", "SECRET HERE"
-access_token, access_token_secret = "token here" ,"secret token here"
+# consumer_key, consumer_secret = "KEY HERE", "SECRET HERE"
+# access_token, access_token_secret = "token here" ,"secret token here"
 
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token, access_token_secret)
+# auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+# auth.set_access_token(access_token, access_token_secret)
 
-api = tweepy.API(auth)
+# api = tweepy.API(auth)
 
-public_tweets = api.home_timeline()
+# public_tweets = api.home_timeline()
 
-for tweet in public_tweets:
-    print(tweet.text)
+# for tweet in public_tweets:
+#     print(tweet.text)
 
 
 class DorianStreamListener(tweepy.StreamListener):
@@ -24,7 +24,6 @@ class DorianStreamListener(tweepy.StreamListener):
             return False
 
         else:
-            #pass
             return True
 
 def establish_stream(consumer_key, consumer_secret, tracking="Dorian"):
