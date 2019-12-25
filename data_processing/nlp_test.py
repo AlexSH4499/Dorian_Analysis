@@ -9,19 +9,100 @@ from nltk import classify, NaiveBayesClassifier
 
 #regex modules
 
-import random, re, string
+import typing, random, re, string
+from typing import List, Any
 
-def remove_noise(tweet_tokens,  stop_words=tuple()):
+def twitter_regex()->List[str]:
+    ignore = ['http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',#https/special chars
+            '(@[A-Za-z0-9]+)',#handle
+    ]
+    return ignore
+
+def filter_metadata(uncleandsed_tokens):
+
+    cleansed_tokens = []
+    for token, tag in pos_tag(uncleansed_tokens):
+
+        token = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
+                       '(?:%[0-9a-fA-F][0-9a-fA-F]))+','', token)
+        if tag.startswith("NN"):
+            pos = 'n'
+        if tag.startswith("VB"):
+            pos = 'v'
+        else:
+            pos='a'
+
+        lemmatizer = WordNetLemmatizer()
+        token = lemmatizer.lemmatize(token,pos )
+
+        if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
+            cleansed_tokens.append(token.lower())
+
+    return cleansed_tokens
+
+
+def filter_handles(uncleansed_tokens):
+
+    cleansed_tokens = []
+    for token, tag in pos_tag(uncleansed_tokens):
+
+        token = re.sub("(@[A-Za-z0-9]+)","",token)
+        if tag.startswith("NN"):
+            pos = 'n'
+        if tag.startswith("VB"):
+            pos = 'v'
+        else:
+            pos='a'
+
+        lemmatizer = WordNetLemmatizer()
+        token = lemmatizer.lemmatize(token,pos )
+
+        if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
+            cleansed_tokens.append(token.lower())
+
+    return cleansed_tokens
+
+# def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->List[Any]:
+
+#     cleaned_tokens = []
+
+#     for token, tag in pos_tag(tweet_tokens):
+#         #checks for http/https and special characters in token
+#         # and replaces them with empty string
+#         token = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
+#                        '(?:%[0-9a-fA-F][0-9a-fA-F]))+','', token)
+#         #searches for handles and replaces them with empty string
+#         token = re.sub("(@[A-Za-z0-9]+)","",token)
+
+#         if tag.startswith("NN"):
+#             pos = 'n'
+#         if tag.startswith("VB"):
+#             pos = 'v'
+#         else:
+#             pos='a'
+
+#         lemmatizer = WordNetLemmatizer()
+#         token = lemmatizer.lemmatize(token,pos )
+
+#         if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
+#             cleaned_tokens.append(token.lower())
+
+#     return cleaned_tokens
+
+
+def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->List[Any]:
 
     cleaned_tokens = []
 
     for token, tag in pos_tag(tweet_tokens):
         #checks for http/https and special characters in token
         # and replaces them with empty string
-        token = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
-                       '(?:%[0-9a-fA-F][0-9a-fA-F]))+','', token)
+
+        #apply all the regex filtering here
+        for reg in twitter_regex():
+            token = re.sub(reg,'', token)
         #searches for handles and replaces them with empty string
-        token = re.sub("(@[A-Za-z0-9]+)","",token)
+        #token = re.sub("(@[A-Za-z0-9]+)","",token)
 
         if tag.startswith("NN"):
             pos = 'n'
@@ -38,9 +119,8 @@ def remove_noise(tweet_tokens,  stop_words=tuple()):
 
     return cleaned_tokens
 
-
 #Remove conjugations of words like verbs
-def lemmatize_sentence(tokens):
+def lemmatize_sentence(tokens:List[Any])->List[Any]:
 
     lemmatizer = WordNetLemmatizer()
 
@@ -56,6 +136,7 @@ def lemmatize_sentence(tokens):
         lemmatized_sentence.append(lemmatizer.lemmatize(word, pos))
     return lemmatized_sentence
 
+#Generators
 def get_all_words(cleaned_tokens_list):
 
     for tokens in cleaned_tokens_list:
@@ -67,11 +148,9 @@ def get_tweets_for_model(cleaned_tokens_list):
     for tweet_token in cleaned_tokens_list:
 
         yield dict([token , True] for token in tweet_token)
+#-----
 
-    return
-
-
-def split_data(data_set=[], cut_off_index=7000):
+def split_data(data_set:List[Any], cut_off_index:int=7000)->tuple:
 
     random.shuffle(data_set)
     train_data = data_set[:cut_off_index]
@@ -95,11 +174,6 @@ def test():
     positive_cleaned_tokens_list = [remove_noise(tokens , stop_words) for tokens in positive_tweet_tokens]
     negative_cleaned_tokens_list = [remove_noise(tokens , stop_words) for tokens in negative_tweet_tokens]
 
-    # for tokens in positive_tweet_tokens:
-    #     positive_cleaned_tokens_list.append(remove_noise(tokens, stop_words))
-
-    # for tokens in negative_tweet_tokens:
-    #     negative_cleaned_tokens_list.append(remove_noise(tokens, stop_words))
 
     positive_tokens_for_model = get_tweets_for_model(positive_cleaned_tokens_list)
     negative_tokens_for_model = get_tweets_for_model(negative_cleaned_tokens_list)
