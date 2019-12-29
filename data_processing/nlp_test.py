@@ -18,35 +18,54 @@ def twitter_regex()->List[str]:
     ]
     return ignore
 
+def valid_token(stopwords , token):
+    if len(token) > 0 and token not in string.punctuation and token.lower() not in stopwords:
+        return True
+    else:
+        return False
+
 
 def clean_token(token):
     for reg in twitter_regex():
         token = re.sub(reg,'', token)
     return token
 
+def determine_pos(tag):
+    pos=''
+    if tag.startswith("NN"):
+            pos = 'n'
+    if tag.startswith("VB"):
+        pos = 'v'
+    else:
+        pos='a'
+
+    if pos =='':
+        raise ValueError('Sorry provided tag has unexpected value!')
+    return pos
+
 def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->List[Any]:
 
-    cleaned_tokens = []
+    # cleaned_tokens = []
 
-    for token, tag in pos_tag(tweet_tokens):
+    # for token, tag in pos_tag(tweet_tokens):
 
-        #apply all the regex filtering here
-        token = clean_token(token)
+    #     #apply all the regex filtering here
+    #     token = clean_token(token)
 
-        if tag.startswith("NN"):
-            pos = 'n'
-        if tag.startswith("VB"):
-            pos = 'v'
-        else:
-            pos='a'
+    #     if tag.startswith("NN"):
+    #         pos = 'n'
+    #     if tag.startswith("VB"):
+    #         pos = 'v'
+    #     else:
+    #         pos='a'
 
-        lemmatizer = WordNetLemmatizer()
-        token = lemmatizer.lemmatize(token,pos )
+    #     lemmatizer = WordNetLemmatizer()
+    #     token = lemmatizer.lemmatize(token,pos )
 
-        if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
-            cleaned_tokens.append(token.lower())
-
-    return cleaned_tokens
+    #     if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
+    #         cleaned_tokens.append(token.lower())
+    clean_tokens = [WordNetLemmatizer().lemmatize(clean_token(token),determine_pos(tag)).lower() for token, tag in pos_tag(tweet_tokens) if valid_token(stop_words, token)]
+    return clean_tokens
 
 #Remove conjugations of words like verbs
 def lemmatize_sentence(tokens:List[Any])->List[Any]:

@@ -22,7 +22,7 @@ def load_file(name=''):
         for row in reader:
             yield row
 
-class TweetDict(OrderedDict):
+class TweetDict:
 
     def __init__(self,user='',geo_loc='',text_data= '', ):
         self.dic = OrderedDict()
