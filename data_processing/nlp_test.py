@@ -43,28 +43,9 @@ def determine_pos(tag):
         raise ValueError('Sorry provided tag has unexpected value!')
     return pos
 
-def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->List[Any]:
+def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->Any:
 
-    # cleaned_tokens = []
-
-    # for token, tag in pos_tag(tweet_tokens):
-
-    #     #apply all the regex filtering here
-    #     token = clean_token(token)
-
-    #     if tag.startswith("NN"):
-    #         pos = 'n'
-    #     if tag.startswith("VB"):
-    #         pos = 'v'
-    #     else:
-    #         pos='a'
-
-    #     lemmatizer = WordNetLemmatizer()
-    #     token = lemmatizer.lemmatize(token,pos )
-
-    #     if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
-    #         cleaned_tokens.append(token.lower())
-    clean_tokens = [WordNetLemmatizer().lemmatize(clean_token(token),determine_pos(tag)).lower() for token, tag in pos_tag(tweet_tokens) if valid_token(stop_words, token)]
+    clean_tokens = (WordNetLemmatizer().lemmatize(clean_token(token),determine_pos(tag)).lower() for token, tag in pos_tag(tweet_tokens) if valid_token(stop_words, token))
     return clean_tokens
 
 #Remove conjugations of words like verbs
