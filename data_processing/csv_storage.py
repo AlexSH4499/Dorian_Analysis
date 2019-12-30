@@ -1,6 +1,7 @@
 import csv
 from collections import OrderedDict
 
+
 #might need to re-think what data format will be in
 #should obviously be a dict
 
@@ -14,6 +15,7 @@ def create_file(data=[], fieldnames=[] ,name="",delimiter=','):
         for row in data:
             wr.writerow(row)
 
+
 def load_file(name=''):
     
     with open(name, newline="") as csv_file:
@@ -24,19 +26,50 @@ def load_file(name=''):
 
 class TweetDict:
 
-    def __init__(self,user='',geo_loc='',text_data= '', ):
-        self.dic = OrderedDict()
-        self.dic['user']=user
-        self.dic['geo_loc']= geo_loc
-        self.dic['text_data']=text_data
+    #data we want to store (in a tuple)
+    # def __init__(self,user='',geo_loc='',text_data= '', ):
+    def __init__(self,tweet_data=tuple() ):
+        assert len(tweet_data) == len(self.params())
+        self.dic = OrderedDict(zip(self.params(), tweet_data))
+        # assert len(tweet_data) == len(self.params())
+        # for par,val in zip(self.params(), tweet_data):
+        #     self.dic[par] = val
         return
 
-    def params(self):
-        return self.dic.keys()
-    
-    def __str__(self):
+    def data(self):
+        return (self.dic[param] for param in self.params())
 
-        return f"[{self.dic['user']}]@{self.dic['geo_loc']= geo_loc}| {self.dic['text_data']=text_data} |"
+    #parameters we want to store
+    def params(self):
+        params=('id','user', 'place', 'lang','text_data')
+        return params
+    
+    #TODO:adds a ',' at the end, should not be the case needs to be fixed
+    def __str__(self):
+        st_rep = ""
+
+        for arg, val in self.dic.items():
+            st_rep += f'{val},'
+        st_rep= st_rep[0:len(st_rep)-2]#removes last comma
+        return st_rep
+    
+    #so we can reuse the same object instead of recreating it always
+    def reset(self):
+
+        for k,v in self.dic:
+            self.dic.popitem()
+    
+        return
+    
+    def recycle(self, new_tweet_data=tuple()):
+        #TODO:make sure the dictionary
+        #    :doesn't keep
+        #    :garbage stored from previous tweet
+        assert len(new_tweet_data) == len(self.params())
+        for k,v in zip(self.params() , new_tweet_data):
+            self.dic[k] = v 
+        return
+
 
 
 
