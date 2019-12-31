@@ -7,33 +7,44 @@ from collections import OrderedDict
 
 def create_file(data=[], fieldnames=[] ,name="",delimiter=','):
 
-    with open(name, 'w') as csv_file:
+    try:
+        with open(name, mode='w') as csv_file:
 
-        wr = csv.DictWriter(csv_file, fieldnames=fieldnames )
-        wr.writeheader()
+            wr = csv.DictWriter(csv_file, fieldnames=fieldnames )
+            wr.writeheader()
 
-        for row in data:
-            wr.writerow(row)
-
+            for row in data:
+                wr.writerow(row)
+    except IOError as e:
+        print(f'Error while creating file: {name}',e)
 
 def load_file(name=''):
     
-    with open(name, newline="") as csv_file:
-        reader = csv.DictReader(csv_file)
+    try:
+        with open(name, newline="", mode='r') as csv_file:
+            reader = csv.DictReader(csv_file)
 
-        for row in reader:
-            yield row
+            for row in reader:
+                yield row
+    except IOError as e:
+        print(f'Error while loading file: {name}', e)
+
+#this seems unnecessary
+class TweetData:
+
+    def __init__(self,desired_data):
+        self.data = desired_data
+        return
+    
+    
+
 
 class TweetDict:
 
     #data we want to store (in a tuple)
-    # def __init__(self,user='',geo_loc='',text_data= '', ):
     def __init__(self,tweet_data=tuple() ):
         assert len(tweet_data) == len(self.params())
         self.dic = OrderedDict(zip(self.params(), tweet_data))
-        # assert len(tweet_data) == len(self.params())
-        # for par,val in zip(self.params(), tweet_data):
-        #     self.dic[par] = val
         return
 
     def data(self):
@@ -73,3 +84,13 @@ class TweetDict:
 
 
 
+def test():
+    dic = dict(zip(('id','user', 'place', 'lang','text_data'),(0,1, 10 , 'eng', 'assignment')))
+    dat=[]
+    dat.append(dic)
+    create_file(name='test.csv',data=dat, fieldnames=['id','user', 'place', 'lang','text_data'] )
+
+    return
+
+if __name__ == '__main__':
+    test()
