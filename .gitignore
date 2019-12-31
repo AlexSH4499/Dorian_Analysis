@@ -1,5 +1,5 @@
 tweepy_au.py
 *.csv
-**/Dorian
-**/.vscode
+/Dorian/*
+/.vscode/*
 
