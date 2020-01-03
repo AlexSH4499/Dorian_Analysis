@@ -2,4 +2,5 @@ tweepy_au.py
 *.csv
 /DORIAN/*
 /.vscode/*
+*/__pycache__/*
 

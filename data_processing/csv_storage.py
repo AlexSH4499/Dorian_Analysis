@@ -29,6 +29,7 @@ def load_file(name=''):
     except IOError as e:
         print(f'Error while loading file: {name}', e)
 
+
 #this seems unnecessary
 class TweetData:
 
@@ -37,22 +38,25 @@ class TweetData:
         return
     
     
+    
 
 
-class TweetDict:
+class TweetDict(OrderedDict):
 
     #data we want to store (in a tuple)
-    def __init__(self,tweet_data=tuple() ):
-        assert len(tweet_data) == len(self.params())
-        self.dic = OrderedDict(zip(self.params(), tweet_data))
-        return
+    def __init__(self,tweet_json:{}):
+        # assert len(tweet_data) == len(self.params())
+        self.dic = OrderedDict()
+        self.validate(tweet_json)
+        # assert len(self.dic) == len(self.params()
+        
 
     def data(self):
         return (self.dic[param] for param in self.params())
 
     #parameters we want to store
     def params(self):
-        params=('id','user', 'place', 'lang','text_data')
+        params=('id','user', 'place', 'lang','text')
         return params
     
     #TODO:adds a ',' at the end, should not be the case needs to be fixed
@@ -81,8 +85,25 @@ class TweetDict:
             self.dic[k] = v 
         return
 
+    def validate(self, incoming_dict:{}):
+        parms = self.params()#the data we actually want to extract
+
+        for param in parms:
+            try:
+                self.dic[param] = incoming_dict[param]
+            except Exception as e:
+                print(f"Invalid Key:{param} val:{incoming_dict[param]}", e)
+        return
+
+    # def keys(self):
+    #     return self.dic.keys()
 
 
+    # def values(self):
+    #     return self.dic.values()
+
+    # def items(self):
+    #     return self.dic.items()    
 
 def test():
     dic = dict(zip(('id','user', 'place', 'lang','text_data'),(0,1, 10 , 'eng', 'assignment')))
