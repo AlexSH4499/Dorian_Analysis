@@ -95,16 +95,6 @@ class TweetDict(OrderedDict):
                 print(f"Invalid Key:{param} val:{incoming_dict[param]}", e)
         return
 
-    # def keys(self):
-    #     return self.dic.keys()
-
-
-    # def values(self):
-    #     return self.dic.values()
-
-    # def items(self):
-    #     return self.dic.items()    
-
 def test():
     dic = dict(zip(('id','user', 'place', 'lang','text_data'),(0,1, 10 , 'eng', 'assignment')))
     dat=[]
