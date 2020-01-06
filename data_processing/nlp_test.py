@@ -2,7 +2,7 @@
 from nltk.corpus import twitter_samples
 from nltk.tag import pos_tag
 from nltk.stem.wordnet import WordNetLemmatizer
-
+from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 
 from nltk import classify, NaiveBayesClassifier
@@ -86,7 +86,27 @@ def split_data(data_set:List[Any], cut_off_index:int=7000)->tuple:
     test_data = data_set[cut_off_index:]
     return train_data, test_data
 
-def prepare_data(language="english")-> List[Any]:
+def prepare_data(language:str="english", tweets_data:List[str])-> List[Any]:
+
+    #we
+    #tokenize data
+    #returns a list of tokens per tweet text provided
+    tweet_tokens = [word_tokenize(tweet) for tweet in tweets_data ]
+
+    #Words to ignore from Language
+    stop_words = stopwords.words(language)
+
+    cleaned_tokens_list = [remove_noise(tokens , stop_words) for tokens in tweet_tokens]
+
+    #dict with token as keys and True as value
+    tokens_for_model = get_tweets_for_model(cleaned_tokens_list)
+
+    unclassified_data = [(tweet_dict, "Unclassified") for tweet_dict in tokens_for_model]
+
+
+    return unclassified_data
+
+def prepare_test_data(language="english")-> List[Any]:
     data_set = []
 
     #raw data
@@ -115,7 +135,7 @@ def prepare_data(language="english")-> List[Any]:
 
 def test(language="english"):
 
-    data_set = prepare_data(language)
+    data_set = prepare_test_data(language)
     #7000 to train 3,000 to test
     train, test = split_data(data_set, cut_off_index=7000)
 

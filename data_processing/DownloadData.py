@@ -15,7 +15,8 @@ This is to download data for Dorian ('al052019'),
 
 import urllib.request
 import time
-ffolder = 'C:/Users/Masters-PC/Downloads/HurricaneData/'
+# ffolder = 'C:/Users/Masters-PC/Downloads/HurricaneData/'
+ffolder = '/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/'
 print('Beginning file download with urllib2...')
 urls = """al052019_5day_001.zip
 al052019_5day_002.zip
