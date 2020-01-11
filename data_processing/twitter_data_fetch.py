@@ -64,7 +64,9 @@ def establish_stream( tracking="Dorian", num_tweets=10):
 #     return
 
 def params():
-    return ['id','user', 'place', 'lang','text']
+    # return ['status_id','user_id ', 'place', 'lang','text']
+    return ['status_id','user_id ','created_at', 'place_name','place_fullname', 'country' ,'location', 'retweet_location', 'geo_coords', 'coords_coords', 'bbox_coords', 'place', 'lang','text']
+
     
 def in_params(k):
     return k in params()
@@ -102,6 +104,34 @@ def fetch_data(filename='tweets_data/test.csv'):
 
     return
 
+
+# def extract_data_csv(filepath=default_csv_file ,date_time=""):#the constant is defined on a file not included in this project
+#     csv_dic_gen  = load_file(name=filepath)#generator for dictionaries containing the data
+
+#     li_dics=({k : v for k , v in dic.items() if in_params(k)} for dic in csv_dic_gen)
+
+#     print(type(li_dics))
+#     # li_dics = []
+#     # for dic in csv_data:
+#         # temp_dic = {}
+#         # for k , v in dic:
+#         #     if in_params(k):
+#         #         temp_dic[k] = v
+#         # li_dics.append(temp_dic)
+
+#     # print(li_dics[0].keys())
+
+#     # for row in csv_data:
+#     #     print(f'Length of Row:{len(row)}\n Row Contents:{row}\n\n')
+#     # filtered_data = { k:v for k,v in csv_data if in_params(k)} #filtered the params we want, now we have to fix the values
+#     return return li_dics
+
+def extract_data_csv(filepath=default_csv_file ,date_time=""):#the constant is defined on a file not included in this project
+    return ({k : v for k , v in dic.items() if in_params(k)} for dic in load_file(name=filepath))
+
 if __name__ == '__main__':
-    fetch_data()
+    # fetch_data()
+    for dic in extract_data_csv():
+        print(dic)
+        print()
     

@@ -1,0 +1,3 @@
+must run this to allow plotting on  linux machines:
+
+sudo apt-get install python3-tk

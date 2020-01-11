@@ -1,9 +1,36 @@
 
+import os
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+import shapefile as shp
 
 
+def plot_map(filepath=''):
+    assert os.path.exists(filepath), "Input file does not exist."
+    sf = shp.Reader(filepath)
+    plt.figure()
+
+    i_start = 0
+    i_end = 0
+    for shape in sf.shapeRecords():
+
+        for i in range(len(shape.shape.parts)):
+
+            i_start = shape.shape.parts[i]
+
+            if i == len(shape.shape.parts)-1:
+
+                i_end = len(shape.shape.points)
+            
+            else:
+                i_end = shape.shape.parts[i+1]
+            
+        x = [i[0] for i in shape.shape.points[i_start:i_end]]
+        y = [i[1] for i in shape.shape.points[i_start:i_end]]
+        plt.plot(x,y)
+    plt.show()
+    return
 
 def plot_fn(data=tuple(), labels=('X','Y'), scale="linear", title="Graph"):
     '''Disclaimer: Streamlined plotting from matplotlib functions,
@@ -44,20 +71,20 @@ def plot_fn_3d(data=tuple(), labels=('X','Y','Z'), scale="linear", title="Graph"
 https://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib
 '''
 
-def plotting_map_shapes(sf=shp.Reader("test.shp")):
+# def plotting_map_shapes(sf=shp.Reader("test.shp")):
 
-    import shapefile as shp  # Requires the pyshp package
-    import matplotlib.pyplot as plt
+#     import shapefile as shp  # Requires the pyshp package
+#     import matplotlib.pyplot as plt
 
-    # sf = shp.Reader("test.shp")
+#     # sf = shp.Reader("test.shp")
 
-    plt.figure()
-    for shape in sf.shapeRecords():
-        x = [i[0] for i in shape.shape.points[:]]
-        y = [i[1] for i in shape.shape.points[:]]
-        plt.plot(x,y)
-    plt.show()
-    return
+#     plt.figure()
+#     for shape in sf.shapeRecords():
+#         x = [i[0] for i in shape.shape.points[:]]
+#         y = [i[1] for i in shape.shape.points[:]]
+#         plt.plot(x,y)
+#     plt.show()
+#     return
 
 ''' 
 alt solution
@@ -65,7 +92,7 @@ alt solution
 https://gis.stackexchange.com/questions/131716/plot-shapefile-with-matplotlib/309780#309780
 
 '''
-def alt_map_plot(mao_file):
+def alt_map_plot(map_file):
 
     import matplotlib.pyplot as plt
     import shapefile
@@ -84,3 +111,20 @@ def alt_map_plot(mao_file):
         ax.plot(*zip(*points[i:j]))
 
     return
+
+def test():
+    # plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059/al052019-059_5day_lin.shp")
+    # plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059/al052019-059_5day_pgn.shp")
+    # plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059/al052019-059_5day_pts.shp")
+    # plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059/al052019-059_ww_wwlin.shp")
+
+    plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059A/al052019-059A_5day_lin.shp")
+    plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059A/al052019-059A_5day_pgn.shp")
+    plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059A/al052019-059A_5day_pts.shp")
+    plot_map(filepath="/home/ghoul/Documents/GitHub/Dorian_Analysis/tweets_data/al052019_5day_059A/al052019-059A_ww_wwlin.shp")
+
+    return
+
+if __name__ == "__main__":
+
+    test()
