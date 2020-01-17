@@ -6,7 +6,7 @@ from collections import OrderedDict
 #should obviously be a dict
 
 def create_file(data=[], fieldnames=[] ,name="",delimiter=','):
-
+    print(data)
     try:
         with open(name, mode='w') as csv_file:
 

@@ -1,3 +1,30 @@
-must run this to allow plotting on  linux machines:
+Optional:
+
+setup a virtualenvironment before installing requirements.txt
+this can be done with Python's included venv package or with the module virtualenv
+
+-- for this project virtualenv was utilized
+
+virtualenv {ENV}
+
+*{} insert whatever name for the environment
+
+to activate it use on linux:
+
+source /path/to/ENV/bin/activate
+
+once it has been run successfully your path in the terminal should look something like this
+
+({ENV})user@{local_machine}:~/Path/To/Project$
+--------------------------------
+
+Now to install the dependencies run:(This assumes the user is in the root directory of the project)
+
+python3 -m pip3 install -r requirements.txt
+
+
+--------------------------
+
+Must run this to allow plotting on  linux machines:
 
 sudo apt-get install python3-tk
