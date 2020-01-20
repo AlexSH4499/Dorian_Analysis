@@ -96,6 +96,9 @@ def clean_json(t_json):
 def tweet_to_json(tweet):
     return tweet._json#thiw was not specified in the documentation but is in the class of the Status Object
 
+#We need to fix this
+# should detect if there is a NA or repetitions of it
+# so we only pick the most important non-NA location value is kept
 def extract_location_data(tweet):
     possible_locations= ['location', 'retweet_location', 'geo_coords', 'coords_coords', 'bbox_coords', 'place_fullname', 'place_name', 'place', 'country' ,]
     ans=''
@@ -138,32 +141,19 @@ def extract_data_csv(filepath=default_csv_file ,date_time=""):#the constant is d
 
 def format_datetime(data):
     to_extract="created_at"
-    # pattern = r"\s*(?=\d{2}(?:\d{2})?-\d{1,2}-\d{1,2}\b)"
 
     for dic in data:
 
         datetime= dic[to_extract]
         del dic[to_extract]
-        # print(datetime)
+
         # wasnt saving the changes to datetime var, derp
         datetime = datetime.strip()
         datetime = datetime.split(' ')
-        # print(datetime)
+
         # This is not splitting appropriately
         dic['date'] = datetime[0]
         dic['time'] = datetime[1]
-        # for k,v in dic.items():
-
-        #     if k == to_extract:
-        #         # manipulate here
-        #         datetime= dic[k]
-        #         del dic[k]
-        #         datetime.strip().split()
-        #         dic['date'] = datetime[0]
-        #         dic['time'] = datetime[1]
-        #         break
-        # print(dic)
-        # print()
 
     return data
 
@@ -173,7 +163,7 @@ def save_extracted_data(data=[dic for dic in extract_data_csv()], filename="extr
     try:
         param =params()
         param.remove("created_at")
-        print(param)
+        # print(param)
         param.append("date")
         param.append("time")
 
@@ -185,6 +175,17 @@ def save_extracted_data(data=[dic for dic in extract_data_csv()], filename="extr
         print(f"\n[!]Finished saving extracted data into {filename}\n\n")
 
     return
+
+def load_extracted_data(filename='', filter_params=['','']):
+
+    data = load_file(name=filename)
+
+    for dic in data:
+
+        #here we can filter the data we want only
+        pass
+
+    return data
 
 if __name__ == '__main__':
     # fetch_data()
