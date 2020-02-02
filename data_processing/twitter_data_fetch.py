@@ -159,7 +159,6 @@ def save_extracted_data(data=[dic for dic in extract_data_csv()], filename="extr
     try:
         param =params()
         param.remove("created_at")
-        # print(param)
         param.append("date")
         param.append("time")
 
