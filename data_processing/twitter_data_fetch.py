@@ -28,14 +28,7 @@ class DorianStreamListener(tweepy.StreamListener):
 
         else:
             return True
-    #context manager logic
-    # def __enter__(self):
 
-    #     return
-    
-    # def __exit__(self):
-
-    #     return
 
 def establish_stream( tracking="Dorian", num_tweets=10):
     
@@ -94,12 +87,16 @@ def clean_json(t_json):
     return res
 
 def tweet_to_json(tweet):
-    return tweet._json#thiw was not specified in the documentation but is in the class of the Status Object
+    if tweet._json == None:
+        raise ValueError("Tweet does not contain a valid json instance.\n")
+    return tweet._json#this was not specified in the documentation but is in the class of the Status Object
 
 #We need to fix this
 # should detect if there is a NA or repetitions of it
 # so we only pick the most important non-NA location value is kept
 def extract_location_data(tweet):
+    expression = @"^([N][A])+$"#need to fix this so it detects NAN better from twitter's API
+    pattern = re.compile(expression)
     possible_locations= ['location', 'retweet_location', 'geo_coords', 'coords_coords', 'bbox_coords', 'place_fullname', 'place_name', 'place', 'country' ,]
     ans=''
 
@@ -107,8 +104,7 @@ def extract_location_data(tweet):
 
         if tweet[loc].strip().split().join() != None:
 
-            if tweet[loc] == 'NA':#should check if it contains this in a substring using regex
-
+            if len(pattern.search(tweet[loc]).group())  >  0:#should check if it contains this in a substring using regex
                 ans = np.nan
                 break
             else:
@@ -140,12 +136,12 @@ def extract_data_csv(filepath=default_csv_file ,date_time=""):#the constant is d
     return ({k : v for k , v in dic.items() if in_params(k)} for dic in load_file(name=filepath))
 
 def format_datetime(data):
-    to_extract="created_at"
+    to_extract="created_at"#key we want to extract and format
 
     for dic in data:
 
-        datetime= dic[to_extract]
-        del dic[to_extract]
+        datetime= dic[to_extract]# YYYY/MM/DD hh:mm:ss
+        del dic[to_extract]#remove the dic entry that has both stored inline
 
         # wasnt saving the changes to datetime var, derp
         datetime = datetime.strip()

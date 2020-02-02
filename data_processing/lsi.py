@@ -25,7 +25,7 @@ terms = vectorizer.get_feature_names()
 
 for i, comp in enumerate( lsa.components_):
 
-    terms_in_comp = zip(temrs, comp)
+    terms_in_comp = zip(terms, comp)
 
     sorted_terms = sorted(terms_in_comp, key=lambda x:x[1], reverse=True)[:10]
 
