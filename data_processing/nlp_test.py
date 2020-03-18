@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 
 from nltk import classify, NaiveBayesClassifier
+from lsi import latent_semantic_analysis
 
 #regex modules
 
@@ -13,12 +14,19 @@ import typing, random, re, string
 from typing import List, Any
 
 def twitter_regex()->List[str]:
+    '''
+        Returns a list of all the regex we want to use to cleanse the tweets.
+    '''
     ignore = ['http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',#https/special chars
             '(@[A-Za-z0-9]+)',#handle
     ]
     return ignore
 
 def valid_token(stopwords , token):
+    '''
+        Verifies if token is valid by contrasting with the stopwords provided.
+        Returns True if not found, otherwise False
+    '''
     if len(token) > 0 and token not in string.punctuation and token.lower() not in stopwords:
         return True
     else:
@@ -31,6 +39,13 @@ def clean_token(token):
     return token
 
 def determine_pos(tag):
+    '''
+        Returns a simple character to indicate what a tag is.
+        If pos is somehow left empty, the function will raise a value error for the unexpected tag.
+        (noun) NN -> n
+        (verb) VB -> v
+        everything else -> a
+    '''
     pos=''
     if tag.startswith("NN"):
             pos = 'n'
@@ -44,7 +59,9 @@ def determine_pos(tag):
     return pos
 
 def remove_noise(tweet_tokens:List[Any],  stop_words:tuple)->Any:
-
+    '''
+        Receives a list of tokens extracted from the tweets and a list of stopwords to use for the filtering.
+    '''
     clean_tokens = (WordNetLemmatizer().lemmatize(clean_token(token),determine_pos(tag)).lower() for token, tag in pos_tag(tweet_tokens) if valid_token(stop_words, token))
     return clean_tokens
 
@@ -73,21 +90,35 @@ def get_all_words(cleaned_tokens_list):
             yield token
 
 def get_tweets_for_model(cleaned_tokens_list):
-
+    '''
+        Creates a generator instance based off the provided cleansed tokens list.
+        The generator yields a dict with k=token and value=True
+    '''
     for tweet_token in cleaned_tokens_list:
 
         yield dict([token , True] for token in tweet_token)
 #-----
 
 def split_data(data_set:List[Any], cut_off_index:int=7000)->tuple:
+    '''
+        Splits a provided list into 2 separate lists based off a provided cut off index.
 
+        Returns a pair of lists with cut-off point being the last element of the first and the inverse for the second list. 
+    '''
     random.shuffle(data_set)
     train_data = data_set[:cut_off_index]
     test_data = data_set[cut_off_index:]
     return train_data, test_data
 
-def prepare_data(language:str="english", tweets_data:List[str])-> List[Any]:
-
+def prepare_data( tweets_data:List[str], language:str="english")-> List[Any]:
+    '''
+        Receives a list of text data extracted from tweets to be tokenized, lemmatized and left unclassified.
+        Returns a list of tuples where value [0] is tweet_dict and value[1] is "Unclassified" string.
+        Keyword arguments:
+        
+        tweets_data -- list of unprocessed text data to be tokenized and lemmatized
+        language -- string representing the language whose stop words we want to use for tokenization
+    '''
     #we
     #tokenize data
     #returns a list of tokens per tweet text provided
@@ -103,10 +134,13 @@ def prepare_data(language:str="english", tweets_data:List[str])-> List[Any]:
 
     unclassified_data = [(tweet_dict, "Unclassified") for tweet_dict in tokens_for_model]
 
+    return unclassified_data#list[tuple(tweet_dict,"classification")]
 
-    return unclassified_data
+def prepare_test_data(language:str="english")-> List[Any]:
+    '''
+        Test  method with dummy data to use in a Naive Bayes Classifier
+    '''
 
-def prepare_test_data(language="english")-> List[Any]:
     data_set = []
 
     #raw data
@@ -146,6 +180,10 @@ def test(language="english"):
     print(classifier.show_most_informative_features(10))
     return
 
+def test_lsi():
+
+    latent_semantic_analysis(data=prepare_test_data(), language="english", num_comps=27)
 
 if __name__ == "__main__":
-    test()
+    # test()
+    test_lsi()

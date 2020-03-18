@@ -44,20 +44,20 @@ def establish_stream( tracking="Dorian", num_tweets=10):
 #aUSELESS METHOD
 #BUT I STILL WANT TO TRY AND MAKE IT USABLE
 
-# def init_api():
+def init_api():
 
-#     auth ,stream = establish_stream()
+    auth ,stream = establish_stream()
 
-#     try:
-#         print("Stream Started")
-#         # stream.sample(languages=['en'])
-#     except KeyboardInterrupt:
-#         print("Stopped")
+    try:
+        print("Stream Started")
+        # stream.sample(languages=['en'])
+    except KeyboardInterrupt:
+        print("Stopped")
     
-#     finally:
-#         print("Stream Ended")
-#         # stream.disconnect()
-#     return
+    finally:
+        print("Stream Ended")
+        # stream.disconnect()
+    return
 
 def params():
     # return ['status_id','user_id ', 'place', 'lang','text']
