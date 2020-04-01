@@ -1,3 +1,5 @@
+import typing
+from typing import List, Any, Dict
 import tweepy, sys, json
 from tweepy import *
 from tweepy_au import *
@@ -30,7 +32,7 @@ class DorianStreamListener(tweepy.StreamListener):
             return True
 
 
-def establish_stream( tracking="Dorian", num_tweets=10):
+def establish_stream( tracking:str="Dorian", num_tweets:int=10):
     
     auth = tweepy.AppAuthHandler(consumer_key=consumer_key,consumer_secret=consumer_secret)
 
@@ -59,18 +61,18 @@ def init_api():
         # stream.disconnect()
     return
 
-def params():
-    # return ['status_id','user_id ', 'place', 'lang','text']
+def params()->List[str]:
     return ['status_id','user_id ','created_at',
     'place_name','place_fullname', 'country' ,
     'location', 'retweet_location',
     'geo_coords', 'coords_coords', 'bbox_coords', 'place', 'lang','text']
 
     
-def in_params(k):
+def in_params(k:str)->bool:
     return k in params()
 
-def clean_json(t_json):
+# Put any as second param because IDK right now
+def clean_json(t_json:Dict[str,Any])->Dict[str, Any]:
     #there's a nested json dict in 'user'
     #this is the user data layout in the nested json
     user_dict = t_json['user']
@@ -95,7 +97,7 @@ def tweet_to_json(tweet):
 # should detect if there is a NA or repetitions of it
 # so we only pick the most important non-NA location value is kept
 def extract_location_data(tweet):
-    expression = @"^([N][A])+$"#need to fix this so it detects NAN better from twitter's API
+    expression = "^([N][A])+$"#need to fix this so it detects NAN better from twitter's API
     pattern = re.compile(expression)
     possible_locations= ['location', 'retweet_location', 'geo_coords', 'coords_coords', 'bbox_coords', 'place_fullname', 'place_name', 'place', 'country' ,]
     ans=''
@@ -115,7 +117,7 @@ def extract_location_data(tweet):
 
     return ans
 
-def fetch_data(filename='tweets_data/test.csv'):
+def fetch_data(filename:str='tweets_data/test.csv'):
     #establish a connection
     #receive and parse the tweets into the format we want
     #pass parsed tweets into the csv file we want
@@ -135,7 +137,7 @@ def extract_data_csv(filepath=default_csv_file ,date_time=""):#the constant is d
     '''
     return ({k : v for k , v in dic.items() if in_params(k)} for dic in load_file(name=filepath))
 
-def format_datetime(data):
+def format_datetime(data:List[Dict[str,str]])->Dict[str,str]:
     to_extract="created_at"#key we want to extract and format
 
     for dic in data:
@@ -155,7 +157,7 @@ def format_datetime(data):
 
 #Figured out the problem, ws trying to iterate over an already used generator
 #refer to iter == iter problem in python
-def save_extracted_data(data=[dic for dic in extract_data_csv()], filename="extracted_harp.csv"):
+def save_extracted_data(data:List[Dict[str,str]]=[dic for dic in extract_data_csv()], filename:str="extracted_harp.csv"):
     try:
         param =params()
         param.remove("created_at")
@@ -171,14 +173,22 @@ def save_extracted_data(data=[dic for dic in extract_data_csv()], filename="extr
 
     return
 
-def load_extracted_data(filename='', filter_params=['','']):
+# TODO: FILTER OUT THE NAN Data from location value
+def load_extracted_data(filename:str='tweets_data/test.csv', filter_params:List[str]=['text',''])->List[Dict[str,str]]:
 
-    data = load_file(name=filename)
-
+    data = load_file(name=filename)#list of dics
+    extracted=[]
     for dic in data:
 
         #here we can filter the data we want only
-        pass
+        # for k in dic.keys():
+        #     if k == 'place':
+
+        #         if dic[k] == 'NAN':
+        #             continue
+        # else:
+        extracted.append(dic['text'])
+
 
     return data
 

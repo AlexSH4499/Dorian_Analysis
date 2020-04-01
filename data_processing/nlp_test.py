@@ -7,7 +7,7 @@ from nltk.corpus import stopwords
 
 from nltk import classify, NaiveBayesClassifier
 from lsi import latent_semantic_analysis
-
+from twitter_data_fetch import load_extracted_data
 #regex modules
 
 import typing, random, re, string
@@ -83,13 +83,13 @@ def lemmatize_sentence(tokens:List[Any])->List[Any]:
     return lemmatized_sentence
 
 #Generators
-def get_all_words(cleaned_tokens_list):
+def get_all_words(cleaned_tokens_list:List[Any]):
 
     for tokens in cleaned_tokens_list:
         for token in tokens:
             yield token
 
-def get_tweets_for_model(cleaned_tokens_list):
+def get_tweets_for_model(cleaned_tokens_list:List[Any]):
     '''
         Creates a generator instance based off the provided cleansed tokens list.
         The generator yields a dict with k=token and value=True
@@ -167,7 +167,11 @@ def prepare_test_data(language:str="english")-> List[Any]:
 
     return pos_data + neg_data
 
-def test(language="english"):
+# def load_tweets_csv(filename="tweets_data/test.csv"):
+
+#     return
+
+def test(language:str="english"):
 
     data_set = prepare_test_data(language)
     #7000 to train 3,000 to test
